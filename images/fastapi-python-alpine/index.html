@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Namespaces</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f8f8;
+            color: #000;
+        }
+
+        h1 {
+            color: #000;
+        }
+
+        .button-container {
+            margin-bottom: 10px;
+        }
+
+        button {
+            display: block;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #bbb;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 10px;
+            width: 25%;
+        }
+
+    </style> 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function getNamespaces() {
+            axios.get('/namespaces')
+                .then(function (response) {
+                    var namespaces = response.data.namespaces;
+                    var namespacesList = document.getElementById('namespaces-list');
+                    namespacesList.innerHTML = '';
+
+                    namespaces.forEach(function (namespace) {
+                        var li = document.createElement('li');
+                        li.appendChild(document.createTextNode(namespace));
+                        namespacesList.appendChild(li);
+                    });
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+
+        function createNamespace() {
+            var name = prompt('Digite o namespace:');
+            if (name) {
+                axios.post('/create', { name: name })
+                    .then(function () {
+                        alert('Namespace criado com sucesso.');
+                        getNamespaces();
+                    })
+                    .catch(function (error) {
+                        console.error(error);
+                    });
+            }
+        }
+
+        function deleteNamespace() {
+            var name = prompt('Digite o namespace para deletar:');
+            if (name) {
+                axios.delete('/delete/' + name)
+                    .then(function () {
+                        alert('Namespace deletado com sucesso.');
+                        getNamespaces();
+                    })
+                    .catch(function (error) {
+                        console.error(error);
+                    });
+            }
+        }
+        setInterval(getNamespaces, 3000);
+    </script>
+</head>
+<body>
+    <h1>Namespaces</h1>
+    <button onclick="getNamespaces()">Listar Namespaces</button>
+    <ul id="namespaces-list"></ul>
+    <button onclick="createNamespace()">Criar Namespaces</button>
+    <button onclick="deleteNamespace()">Deletar Namespaces</button>
+</body>
+</html>
